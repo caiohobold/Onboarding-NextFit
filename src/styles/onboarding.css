@@ -1,0 +1,147 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.app-container {
+  background-image: url('../assets/sistemaprint.png'); 
+  background-size: cover; 
+  background-position: center; 
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.modal-2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.modal {
+  background-color: white;
+  width: 90%;
+  max-width: 800px;
+  min-height: 350px;
+  height: auto;
+  max-height: 100%;
+  border-radius: 20px;
+  outline: none;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  position: relative;
+  overflow-y: auto;
+  box-shadow: 7px 10px 5px 0px rgba(0, 0, 0, 0.438);
+}
+
+.stepper-modal {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.div-logo{
+  display: flex;
+  justify-content: end;
+  margin-right: 10px;
+}
+
+.logo-nextfit{
+  width: 90px;
+}
+
+.step-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-modal {
+  width: 60%;
+}
+
+.modal-modalidade {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.step1-title, .step2-title {
+  font-size: 18px;
+  margin-bottom: 12px;
+  font-weight: 200;
+}
+
+.modal-button-container {
+  display: flex;
+  width: 80%;
+  justify-content: center;
+}
+
+.modal-step-contrato{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-step1 {
+  width: 60%;
+}
+.btn-step2 {
+  width: 60%;
+  display: flex;
+  top: -20px;
+}
+
+.form-control-contrato{
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  gap: 20px;
+  align-items: center;
+}
+
+.form-control-avaliacao{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.input-descricaocontrato{
+  width: 60%;
+}
+
+.row-duracaocontrato{
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.select-tipoduracao-contrato{
+  top: -16px;
+  display: flex;
+}
+
+.tipo-duracao-label{
+  margin-top: -10px;
+}
+
+.row1-avaliacao, .row2-avaliacao{
+  width: 60%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
