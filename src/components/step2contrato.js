@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-const Step2Contrato = ({ onDadosChange, onNext, onBack }) => {
+const Step2Contrato = ({ onDadosChange, onNext }) => {
     const [dados, setDados] = React.useState({
         Descricao: '',
         TempoDuracao: '',

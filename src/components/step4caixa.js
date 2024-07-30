@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Switch, FormControlLabel } from '@mui/material';
+import { Button, FormControl, Switch, FormControlLabel } from '@mui/material';
 
 const Step4Caixa = ({onNext, loading, onDadosChange}) => {
 

@@ -94,6 +94,14 @@
   align-items: center;
 }
 
+.modal-step-bloqueios{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .btn-step1 {
   width: 60%;
 }
@@ -101,6 +109,11 @@
   width: 60%;
   display: flex;
   top: -20px;
+}
+
+.btn-step7 {
+  width: 60%;
+  display: flex;
 }
 
 .form-control-contrato{
@@ -144,4 +157,68 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+
+.row1-bloqueios, .row2-bloqueios, .row3-bloqueios{
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.row3-bloqueios{
+  width: 60%;
+}
+
+.row3-bloqueios p{
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  width: 300%;
+  margin-left: 5%;
+}
+
+.switch-bloqueios-1{
+  width: 200%;
+}
+
+.atividade-tab{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.options-container {
+  max-height: 200px; 
+  overflow-y: auto; 
+  display: flex;
+  flex-direction: column; 
+}
+
+.step-campos-title{
+  font-size: 18px;
+  margin-bottom: 12px;
+  font-weight: 200;
+}
+
+.tax-config-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tax-config-section h3 {
+  margin: 0;
+}
+
+.config-financeiro-btn{
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.config-taxas-h3{
+  font-size: 15px;
+  font-weight: 400;
 }

@@ -47,3 +47,50 @@ export const configCaixa = async (payload) => {
     throw error;
   }
 };
+
+export const configBloqueiosContrato = async (payload) => {
+  try {
+    const response = await api.put('ConfigContratoBloqueio', payload);
+    return response.data;
+  } catch (error){
+    throw error;
+  }
+};
+
+export const configCampos = async (payload) => {
+  try {
+    const response = await api.post('ConfigCampoObrigatorio/SalvarCamposObrigatorios', payload);
+    return response.data;
+  } catch (error){
+    throw error;
+  }
+};
+
+export const configReceber = async (payload) => {
+  try {
+    const response = await api.put('configreceber', payload);
+    return response.data;
+  } catch (error){
+    throw error;
+  }
+};
+
+export const configContrato = async (payload) => {
+  try {
+    const response = await api.put('configcontrato', payload);
+    return response.data;
+  } catch (error){
+    throw error;
+  }
+};
+
+export const configComissao = async (payload) => {
+  try {
+    const response = await api.put('configcomissao', payload);
+    return response.data;
+  } catch (error){
+    throw error;
+  }
+};
+
+

@@ -1,30 +1,39 @@
 import React, { useState } from 'react';
 import { Button, Stepper, Step, StepLabel, Modal, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { criarModalidade, criarContrato, configCaixa, configurarAvaliacao } from '../services/api';
+import { criarModalidade, criarContrato, configCaixa, configurarAvaliacao, configBloqueiosContrato, configCampos } from '../services/api';
 import LogoNextFit from '../assets/logo next fit.png';
 import {jwtDecode} from 'jwt-decode';
 import userToken from '../services/authServices';
 
 import Step1Modalidade from './step1modalidade';
 import Step2Contrato from './step2contrato';
-import '../styles/onboarding.css';
-import Step4Caixa from './step4caixa';
 import Step3Avaliacao from './step3avaliacao';
+import Step4Caixa from './step4caixa';
+import Step5Bloqueios from './step5bloqueios';
+import Step6Campos from './step6campos';
+import '../styles/onboarding.css';
+import Step7Financeiro from './step7financeiro';
 
 const Onboarding = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [modalidadeNome, setModalidadeNome] = useState('');
   const [permiteCaixaSimultaneo, setPermiteCaixaSimultaneo] = useState({});
   const [configAvaliacao, setConfigAvaliacao] = useState({});
+  const [bloqueiosContrato, setBloqueiosContrato] = useState({});
+  const [configFinanceiro, setConfigFinanceiro] = useState({});
+  const [configReceberDados, setConfigReceberDados] = useState({});
+  const [configContratoDados, setConfigContratoDados] = useState({});
+  const [configComissao, setConfigComissao] = useState({});
   const [loading, setLoading] = useState(false);
   const [modalidadeId, setModalidadeId] = useState(null);
   const [contratoDados, setContratoDados] = useState({});
+  const [camposObrigatorios, setCamposObrigatorios] = useState([]);
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
   const [errorDialogMessage, setErrorDialogMessage] = useState('');
 
-  const steps = ['Modalidade', 'Contrato', 'Avaliação Física', 'Caixa'];
+  const steps = ['Modalidade', 'Contrato', 'Avaliação Física', 'Caixa', 'Bloqueios de contratos', 'Campos obrigatórios', 'Financeiro'];
 
-  const handleNext = async () => {
+  const handleNext = async (campos) => {
     if (activeStep === 0) {
       try {
         setLoading(true);
@@ -41,12 +50,10 @@ const Onboarding = () => {
           console.error('Erro ao criar modalidade:', error);
         }
       }
-    } else if (activeStep < steps.length - 1) {
-      setActiveStep((prev) => prev + 1);
-    } else {
+    } else if (activeStep === steps.length - 1) {
       try {
         setLoading(true);
-        
+
         // Envia todas as requisições na última etapa
         await criarContrato({
           CodigoCategoriaReceita: 80085,
@@ -79,24 +86,42 @@ const Onboarding = () => {
         const codigoUsuario = parseInt(decodedToken.codigoUsuario);
 
         await configurarAvaliacao({
-            CalculaImc: configAvaliacao.CalculaImc,
-            CalculaPesoIdeal: configAvaliacao.CalculaPesoIdeal,
-            CodigoTenant: codigoTenant,
-            CodigoUsuarioAlteracao: codigoUsuario,
-            CodigoUsuarioCriacao: codigoUsuario,
-            DataAlteracao: new Date().toISOString(),
-            DataCriacao: new Date().toISOString(),
-            Id: 4721,
-            QtdeDiasProximaAvaliacao: parseInt(configAvaliacao.QtdeDiasProximaAvaliacao),
-            Tenant: null,
-            TipoUnidadeMedidaAltura: configAvaliacao.TipoUnidadeMedidaAltura,
+          CalculaImc: configAvaliacao.CalculaImc,
+          CalculaPesoIdeal: configAvaliacao.CalculaPesoIdeal,
+          CodigoTenant: codigoTenant,
+          CodigoUsuarioAlteracao: codigoUsuario,
+          CodigoUsuarioCriacao: codigoUsuario,
+          DataAlteracao: new Date().toISOString(),
+          DataCriacao: new Date().toISOString(),
+          Id: 4721, //é preciso alterar aqui para o ID correto de cada unidade.
+          QtdeDiasProximaAvaliacao: parseInt(configAvaliacao.QtdeDiasProximaAvaliacao),
+          Tenant: null,
+          TipoUnidadeMedidaAltura: configAvaliacao.TipoUnidadeMedidaAltura,
         });
 
         await configCaixa({
           EnviarRelFechamentoParaUsuariosEnvolvidos: true,
           Id: 7500,
           PermiteAbrirMultiplosCaixas: permiteCaixaSimultaneo.PermiteAbrirMultiplosCaixas,
-        })
+        });
+
+        await configBloqueiosContrato({
+          BloquearSemAvaliacaoFisicaOuVencida: bloqueiosContrato.BloquearSemAvaliacaoFisicaOuVencida,
+          BloquearSemExameMedicoOuVencido: bloqueiosContrato.BloquearSemExameMedicoOuVencido,
+          CodigoTenant: codigoTenant,
+          CodigoUnidade: codigoTenant,
+          CodigoUsuarioAlteracao: codigoUsuario,
+          DataAlteracao: new Date().toISOString(),
+          DataCriacao: new Date().toISOString(),
+          DiasBloquearNaoAssinados: bloqueiosContrato.DiasBloquearNaoAssinados,
+          DiasBloquearSemAvaliacaoFisicaOuVencida: bloqueiosContrato.DiasBloquearSemAvaliacaoFisicaOuVencida,
+          DiasBloquearSemExameMedicoOuVencido: bloqueiosContrato.DiasBloquearSemExameMedicoOuVencido,
+          Id: 7245, //é preciso alterar aqui para o ID correto de cada unidade.
+          Tenant: null,
+          Unidade: null
+        });
+
+        await configCampos({ CamposObrigatorios: campos });
 
         setLoading(false);
         setActiveStep((prev) => prev + 1);
@@ -104,6 +129,8 @@ const Onboarding = () => {
         setLoading(false);
         console.error('Erro ao finalizar onboarding:', error);
       }
+    } else {
+      setActiveStep((prev) => prev + 1);
     }
   };
 
@@ -125,6 +152,18 @@ const Onboarding = () => {
 
   const handleCaixaDadosChange = (dados) => {
     setPermiteCaixaSimultaneo(dados);
+  };
+
+  const handleBloqueiosDadosChange = (dados) => {
+    setBloqueiosContrato(dados);
+  };
+
+  const handleCamposObrigatoriosChange = (dados) => {
+    setCamposObrigatorios(dados);
+  };
+
+  const handleFinanceiroChange = (dados) => {
+    setCamposObrigatorios(dados);
   };
 
   const handleBack = () => {
@@ -176,6 +215,25 @@ const Onboarding = () => {
                 onDadosChange={handleCaixaDadosChange}
                 onNext={handleNext}
                 onBack={handleBack}
+              />
+            )}
+            {activeStep === 4 && (
+              <Step5Bloqueios
+                onDadosChange={handleBloqueiosDadosChange}
+                onNext={handleNext}
+                onBack={handleBack}
+              />
+            )}
+            {activeStep === 5 && (
+              <Step6Campos
+                onDadosChange={handleCamposObrigatoriosChange}
+                onNext={handleNext}
+              />
+            )}
+            {activeStep === 6 && (
+              <Step7Financeiro
+                onDadosChange={handleFinanceiroChange}
+                onNext={handleNext}
               />
             )}
           </div>
