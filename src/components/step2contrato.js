@@ -5,11 +5,13 @@ import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Dialog, D
 const Step2Contrato = ({ onDadosChange, onNext }) => {
     const [dados, setDados] = React.useState({
         Descricao: '',
-        TempoDuracao: '',
-        TipoDuracao: ''
+        TempoDuracao: 1,
+        TipoDuracao: 1,
+        ValorTotal: 0
       });
 
       const [openValidationDialog, setOpenValidationDialog] = useState(false);
+      const [openValidationValueDialog, setOpenValidationValueDialog] = useState(false);
 
       const handleChange = (event) => {
         const { name, value } = event.target;
@@ -22,6 +24,10 @@ const Step2Contrato = ({ onDadosChange, onNext }) => {
       setOpenValidationDialog(false);
   };
 
+    const handleCloseValidationValueDialog = () => {
+      setOpenValidationValueDialog(false);
+  };
+
   const handleNext = () => {
     if (!dados.Descricao) {
       setOpenValidationDialog(true);
@@ -30,6 +36,12 @@ const Step2Contrato = ({ onDadosChange, onNext }) => {
       setOpenValidationDialog(true);
     }
     else if(!dados.TipoDuracao){
+      setOpenValidationDialog(true);
+    }
+    else if(dados.ValorTotal === 0){
+      setOpenValidationValueDialog(true);
+    }
+    else if(!dados.ValorTotal){
       setOpenValidationDialog(true);
     }
     else {
@@ -74,6 +86,16 @@ const Step2Contrato = ({ onDadosChange, onNext }) => {
                         <MenuItem value={3}>Mês</MenuItem>
                     </Select>
           </FormControl>
+          <TextField
+            label="Valor"
+            variant="outlined"
+            fullWidth
+            name="ValorTotal"
+            value={dados.ValorTotal}
+            type='number'
+            onChange={handleChange}
+            required
+          />
         </div>
         <Button
           className='btn-step2'
@@ -100,6 +122,25 @@ const Step2Contrato = ({ onDadosChange, onNext }) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleCloseValidationDialog} color="primary">
+                    Ok
+                </Button>
+            </DialogActions>
+        </Dialog>
+
+        <Dialog
+            open={openValidationValueDialog}
+            onClose={handleCloseValidationValueDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">Valor inválido</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    O valor do contrato precisa ser diferente de zero.
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleCloseValidationValueDialog} color="primary">
                     Ok
                 </Button>
             </DialogActions>

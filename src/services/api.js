@@ -84,7 +84,7 @@ export const configContrato = async (payload) => {
   }
 };
 
-export const configComissao = async (payload) => {
+export const configComissoes = async (payload) => {
   try {
     const response = await api.put('configcomissao', payload);
     return response.data;
@@ -92,5 +92,15 @@ export const configComissao = async (payload) => {
     throw error;
   }
 };
+
+export const configVip = async (payload) => {
+  try {
+    const response = await api.put('configvip', payload);
+    return response.data;
+  } catch (error){
+    throw error;
+  }
+};
+
 
 

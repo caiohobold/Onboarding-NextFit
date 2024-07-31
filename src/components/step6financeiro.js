@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Switch, FormControlLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings'; 
 
-const Step7Financeiro = ({ onNext, onDadosChange }) => {
+const Step6Financeiro = ({ onNext, onDadosChangeReceber, onDadosChangeComissao, onDadosChangeContrato, campos }) => {
 
     const [openValidationDialog, setOpenValidationDialog] = useState(false);
     const [openConfigTaxaDialog, setOpenConfigTaxaDialog] = useState(false);
@@ -39,7 +39,6 @@ const Step7Financeiro = ({ onNext, onDadosChange }) => {
 
     const [configReceberDados, setConfigReceberDados] = useState({
         CobrarMultaPorAtraso: false,
-        BloquearSemExameMedicoOuVencido: false,
         CodigoTenant: '',
         CodigoUnidade: '',
         CodigoUsuarioAlteracao: '',
@@ -64,7 +63,7 @@ const Step7Financeiro = ({ onNext, onDadosChange }) => {
         DataCriacao: '',
         Id: '',
         ManterAulasNoPacoteNaRenovacaoContrato: false,
-        ManterContratosComAulasNoPacoteAtivos: 0,
+        ManterContratosComAulasNoPacoteAtivos: false,
         PercentualMultaCancelar: 0,
         QtdeDiasAntesBloquear: 0,
         QtdeDiasAntesEncerrar: 0,
@@ -81,11 +80,6 @@ const Step7Financeiro = ({ onNext, onDadosChange }) => {
         DataCriacao: '',
         GerarComissaoValorIntegral: false,
         Id: '',
-        ManterAulasNoPacoteNaRenovacaoContrato: false,
-        ManterContratosComAulasNoPacoteAtivos: 0,
-        PercentualMultaCancelar: 0,
-        QtdeDiasAntesBloquear: 0,
-        QtdeDiasAntesEncerrar: 0,
         Tenant: null,
         Unidade: null
       });
@@ -105,8 +99,29 @@ const Step7Financeiro = ({ onNext, onDadosChange }) => {
         const updatedValue = type === 'checkbox' ? checked : value;
         const updatedDados = { ...configReceberDados, [name]: updatedValue };
         setConfigReceberDados(updatedDados);
-        onDadosChange(updatedDados);
+        onDadosChangeReceber({ configReceberDados: updatedDados });
+        console.log(updatedDados);
     };
+
+    const handleChangeConfigComissao = (event) => {
+        const { name, value, checked, type } = event.target;
+        const updatedValue = type === 'checkbox' ? checked : value;
+        const updatedDados = { ...configComissao, [name]: updatedValue };
+        setConfigComissao(updatedDados);
+        onDadosChangeComissao({ configComissao: updatedDados });
+        console.log(updatedDados);
+    };
+
+    const handleChangeConfigContrato = (event) => {
+        const { name, value, checked, type } = event.target;
+        const updatedValue = type === 'checkbox' ? checked : value;
+        const updatedDados = { ...configContratoDados, [name]: updatedValue };
+        setConfigContratoDados(updatedDados);
+        onDadosChangeContrato({ configContratoDados: updatedDados });
+        console.log(updatedDados);
+    };
+
+
 
 
     return(
@@ -167,6 +182,17 @@ const Step7Financeiro = ({ onNext, onDadosChange }) => {
                 <DialogTitle id="config-dialog-title">Configurações de taxas e multas por atraso</DialogTitle>
                 <DialogContent>
                     <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={configReceberDados.IncluirTaxasNoValorDoCliente}
+                                    onChange={handleChangeConfigReceber}
+                                    name="IncluirTaxasNoValorDoCliente"
+                                    color="primary"
+                                />
+                            }
+                            label="Incluir taxas (maquininha e boleto) no valor do cliente"
+                        />
+                    <FormControlLabel
                         control={
                             <Switch
                                 checked={configReceberDados.CobrarMultaPorAtraso}
@@ -175,30 +201,34 @@ const Step7Financeiro = ({ onNext, onDadosChange }) => {
                                 color="primary"
                             />
                         }
-                        label="Cobrar Multa Por Atraso"
+                        label="Cobrar multa por atraso das contas a receber"
                     />
-                    <TextField
-                        label="Percentual Mora Diária"
-                        variant="outlined"
-                        fullWidth
-                        name="PercentualMoraDiaria"
-                        value={configReceberDados.PercentualMoraDiaria}
-                        type='number'
-                        onChange={handleChangeConfigReceber}
-                        required
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Percentual Multa Ao Atrasar"
-                        variant="outlined"
-                        fullWidth
-                        name="PercentualMultaAoAtrasar"
-                        value={configReceberDados.PercentualMultaAoAtrasar}
-                        type='number'
-                        onChange={handleChangeConfigReceber}
-                        required
-                        margin="normal"
-                    />
+                    {configReceberDados.CobrarMultaPorAtraso && (
+                        <>
+                            <TextField
+                                label="Percentual Mora Diária"
+                                variant="outlined"
+                                fullWidth
+                                name="PercentualMoraDiaria"
+                                value={configReceberDados.PercentualMoraDiaria}
+                                type='number'
+                                onChange={handleChangeConfigReceber}
+                                required
+                                margin="normal"
+                            />
+                            <TextField
+                                label="Percentual Multa Ao Atrasar"
+                                variant="outlined"
+                                fullWidth
+                                name="PercentualMultaAoAtrasar"
+                                value={configReceberDados.PercentualMultaAoAtrasar}
+                                type='number'
+                                onChange={handleChangeConfigReceber}
+                                required
+                                margin="normal"
+                            />
+                        </>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseConfigTaxaDialog} color="primary">
@@ -216,6 +246,81 @@ const Step7Financeiro = ({ onNext, onDadosChange }) => {
             >
                 <DialogTitle id="config-dialog-title">Configurar multa de encerramento e bloqueios na catraca</DialogTitle>
                 <DialogContent>
+                    <div className='div-assinatura-bloqueios'>
+                        <p className='p-assinatura-bloqueios'>Ao encerrar um contrato, cobrar multa de</p>
+                        <TextField
+                                        label="%"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="PercentualMultaCancelar"
+                                        value={configContratoDados.PercentualMultaCancelar}
+                                        type='number'
+                                        onChange={handleChangeConfigContrato}
+                                        required
+                                        margin="normal"
+                        />
+                    </div>
+                    <div className='div-ativo-bloqueios'>
+                        <p className='p-ativo-bloqueios'>Após o contrato acabar, permitir que o cliente fique ativo por</p>
+                        <TextField
+                                        label="Dias"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="QtdeDiasAntesBloquear"
+                                        value={configContratoDados.QtdeDiasAntesBloquear}
+                                        type='number'
+                                        onChange={handleChangeConfigContrato}
+                                        required
+                                        margin="normal"
+                        />
+                    </div>
+                    <div className='div-bloqueado-bloqueios'>
+                        <p className='p-bloqueado-bloqueios'>Após o contrato acabar, deixar o contrato bloqueado por</p>
+                        <TextField
+                                        label="Dias"
+                                        variant="outlined"
+                                        fullWidth
+                                        name="QtdeDiasAntesEncerrar"
+                                        value={configContratoDados.QtdeDiasAntesEncerrar}
+                                        type='number'
+                                        onChange={handleChangeConfigContrato}
+                                        required
+                                        margin="normal"
+                        />
+                    </div>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={configContratoDados.ManterContratosComAulasNoPacoteAtivos}
+                                onChange={handleChangeConfigContrato}
+                                name="ManterContratosComAulasNoPacoteAtivos"
+                                color="primary"
+                            />
+                        }
+                        label="Manter contratos do tipo 'Pacote de Aulas' como 'ativos', mesmo que a duração do contrato acabe."
+                    />
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={configContratoDados.ManterAulasNoPacoteNaRenovacaoContrato}
+                                onChange={handleChangeConfigContrato}
+                                name="ManterAulasNoPacoteNaRenovacaoContrato"
+                                color="primary"
+                            />
+                        }
+                        label="Manter aulas restantes ao renovar contratos do tipo 'Pacote de Aulas'."
+                    />
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={configContratoDados.BloquearContratosComQqrFinanceiroEmAberto}
+                                onChange={handleChangeConfigContrato}
+                                name="BloquearContratosComQqrFinanceiroEmAberto"
+                                color="primary"
+                            />
+                        }
+                        label="Bloquear clientes com títulos financeiros abertos de qualquer origem."
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseConfigBloqueiosDialog} color="primary">
@@ -232,6 +337,17 @@ const Step7Financeiro = ({ onNext, onDadosChange }) => {
             >
                 <DialogTitle id="config-dialog-title">Configurar comissões de vendas</DialogTitle>
                 <DialogContent>
+                    <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={configComissao.GerarComissaoValorIntegral}
+                                        onChange={handleChangeConfigComissao}
+                                        name="GerarComissaoValorIntegral"
+                                        color="primary"
+                                    />
+                                }
+                                label="Nas comissões com valor fixo, gerar o valor integral da comissão no primeiro recebimento em casos de vendas parceladas."
+                        />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseConfigComissaoDialog} color="primary">
@@ -244,4 +360,4 @@ const Step7Financeiro = ({ onNext, onDadosChange }) => {
     );
 }
 
-export default Step7Financeiro;
+export default Step6Financeiro;

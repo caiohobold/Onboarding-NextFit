@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Button, FormControlLabel, Switch, Tab, Tabs } from '@mui/material';
+import { Button, FormControlLabel, Switch, Tab, Tabs, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-const Step6Campos = ({ onNext, onDadosChange }) => {
+const Step8Campos = ({ onNext, onDadosChange }) => {
+
+    const [openDialog, setOpenDialog] = useState(false);
+
     const [clienteCampos, setClienteCampos] = useState({
         bairro: false,
         celular: false,
@@ -110,6 +113,18 @@ const Step6Campos = ({ onNext, onDadosChange }) => {
     };
 
     const handleNext = () => {
+
+        const isAnyFieldSelected = [
+            ...Object.values(clienteCampos),
+            ...Object.values(leadCampos),
+            ...Object.values(oportunidadeCampos),
+            ...Object.values(atividadeCampos)
+        ].some(value => value);
+    
+        if (!isAnyFieldSelected) {
+            setOpenDialog(true);
+            return;
+        }
         const camposObrigatorios = [
             ...Object.entries(clienteCampos).filter(([key, value]) => value).map(([key]) => ({ NomeDaPropriedade: nomePropriedadeMap[key], Origem: getOrigem('cliente') })),
             ...Object.entries(leadCampos).filter(([key, value]) => value).map(([key]) => ({ NomeDaPropriedade: nomePropriedadeMap[key], Origem: getOrigem('lead') })),
@@ -117,8 +132,12 @@ const Step6Campos = ({ onNext, onDadosChange }) => {
             ...Object.entries(atividadeCampos).filter(([key, value]) => value).map(([key]) => ({ NomeDaPropriedade: nomePropriedadeMap[key], Origem: getOrigem('atividade') })),
         ];
 
+        console.log('Campos obrigatórios:', camposObrigatorios);
+
         onNext(camposObrigatorios);
     };
+
+    
 
     return (
         <div className='modal-step-campos'>
@@ -186,20 +205,38 @@ const Step6Campos = ({ onNext, onDadosChange }) => {
                             }
                             label={campo.charAt(0).toUpperCase() + campo.slice(1).replace('_', ' ')}
                         />
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleNext}
-                            sx={{ mt: 2 }}
-                        >
-                            Próximo
-                        </Button>
                     </div>
                 ))}
             </div>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                sx={{ mt: 2 }}
+            >
+                Próximo
+            </Button>
+            <Dialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">Atenção</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        É necessário escolher pelo menos um campo obrigatório para salvar.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDialog(false)} color="primary" autoFocus>
+                        Ok
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
     
 };
 
-export default Step6Campos;
+export default Step8Campos;
